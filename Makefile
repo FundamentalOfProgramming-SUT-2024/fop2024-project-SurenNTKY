@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -g
 TARGET = game
-SOURCES = main.c create_user.c
+SOURCES = main.c create_user.c guest.c register.c login.c 
 OBJECTS = $(SOURCES:.c=.o)
 
 

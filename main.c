@@ -1,107 +1,50 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <ncurses.h>
 #include "user.h"
 
-void get_input(WINDOW *win, int start_y, int start_x, char *str, int n) {
-   mvwgetnstr(win, start_y, start_x, str, n);
-}
-
-void show_error(WINDOW *win, const char *message) {
-   mvwprintw(win, 9, 1, message);  
-   wrefresh(win);
-}
-
 int main() {
-   initscr();
-   echo();
-   cbreak();
-   keypad(stdscr, TRUE);
+    initscr();
+    cbreak();
+    noecho();
+    keypad(stdscr, TRUE);
 
-   WINDOW *win = newwin(12, 50, 1, 1);
-   box(win, 0, 0);
-   mvwprintw(win, 1, 1, "Username: ");
-   mvwprintw(win, 2, 1, "Password: ");
-   mvwprintw(win, 3, 1, "Email: ");
-   mvwprintw(win, 8, 1, "Press 'q' to quit.");
-   wrefresh(win);
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
 
-   char username[USERNAME_MAX_LENGTH];
-   char password[PASSWORD_MIN_LENGTH * 2];
-   char email[EMAIL_MAX_LENGTH];
+    int win_height = 10;
+    int win_width = 50;
+    int start_y = (max_y - win_height) / 2;
+    int start_x = (max_x - win_width) / 2;
 
-   int field = 0;
-   int ch;
+    WINDOW *win = newwin(win_height, win_width, start_y, start_x);
+    box(win, 0, 0);
+    mvwprintw(win, 1, 1, "1. Login");
+    mvwprintw(win, 2, 1, "2. Register");
+    mvwprintw(win, 3, 1, "3. Guest");
+    mvwprintw(win, 8, 1, "Press the corresponding number to choose.");
+    wrefresh(win);
 
-   while (1) {
-       switch (field) {
-           case 0:
-               mvwprintw(win, 1, 13, "                           ");
-               get_input(win, 1, 13, username, USERNAME_MAX_LENGTH);
-               if (username[0] == '\0') {
-                   show_error(win, "Username cannot be empty.");
-               } else if (!check_username(username)) {
-                   show_error(win, "Username already exists or invalid.");
-               } else {
-                   field++;
-               }
-               break;
-           case 1:
-               mvwprintw(win, 2, 13, "                           ");
-               get_input(win, 2, 13, password, PASSWORD_MIN_LENGTH * 2);
-               if (password[0] == '\0') {
-                   show_error(win, "Password cannot be empty.");
-               } else if (!check_password(password)) {
-                   show_error(win, "Password must be at least 7 chars, including one digit, one uppercase, and one lowercase.");
-               } else {
-                   field++;
-               }
-               break;
-           case 2:
-               mvwprintw(win, 3, 13, "                           ");
-               get_input(win, 3, 13, email, EMAIL_MAX_LENGTH);
-               if (email[0] == '\0') {
-                   show_error(win, "Email cannot be empty.");
-               } else if (!check_email(email)) {
-                   show_error(win, "Invalid email format.");
-               } else {
-                   field++;
-               }
-               break;
-           default:
-               break;
-       }
+    int ch;
+    while ((ch = getch()) != '1' && ch != '2' && ch != '3') { }
 
-       box(win, 0, 0);
-       mvwprintw(win, 1, 1, "Username: ");
-       mvwprintw(win, 2, 1, "Password: ");
-       mvwprintw(win, 3, 1, "Email: ");
-       mvwprintw(win, 8, 1, "Press 'q' to quit.");
-       wrefresh(win);
+    delwin(win);
 
-       ch = getch();
-       if (ch == 'q' || ch == 27) {
-           break;
-       } else if (ch == KEY_UP && field > 0) {
-           field--;
-       } else if (ch == KEY_DOWN && field < 2) {
-           field++;
-       }
+    switch (ch) {
+        case '1':
+            login();
+            break;
+        case '2':
+            register_user();
+            break;
+        case '3':
+            guest();
+            break;
+        default:
+            break;
+    }
 
-       if (field == 3) {
-           if (create_user(username, password, email)) {
-               mvwprintw(win, 5, 1, "User created successfully. Press 'q' to quit.");
-           } else {
-               mvwprintw(win, 5, 1, "Failed to create user. Press 'q' to quit.");
-           }
-           wrefresh(win);
-           getch();
-           break;
-       }
-   }
-
-   endwin();
-   return 0;
+    endwin();
+    return 0;
 }
 
 

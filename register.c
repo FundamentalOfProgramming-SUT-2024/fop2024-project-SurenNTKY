@@ -15,7 +15,7 @@ void register_user() {
     mvwprintw(win, 3, 1, "Email: ");
     mvwprintw(win, 8, 1, "Press ESC to quit.");
     wrefresh(win);
-
+    echo();
     int field = 0;
     int ch;
 

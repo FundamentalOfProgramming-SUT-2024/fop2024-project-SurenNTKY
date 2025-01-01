@@ -11,7 +11,7 @@ void login() {
     mvwprintw(win, 1, 1, "Enter Username: ");
     mvwprintw(win, 2, 1, "Enter Password: ");
     wrefresh(win);
-
+    echo();
     mvwgetnstr(win, 1, 17, username, USERNAME_MAX_LENGTH);
     mvwgetnstr(win, 2, 17, password, PASSWORD_MIN_LENGTH * 2);
 
@@ -20,6 +20,7 @@ void login() {
     } else {
         mvwprintw(win, 4, 1, "Invalid credentials! Press ESC to quit.");
     }
+    noecho();
 
     wrefresh(win);
     int ch;

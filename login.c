@@ -15,7 +15,7 @@ void show_error_login() {
     box(win, 0, 0);
     mvwprintw(win, 1, 2, "Invalid credentials!");
     mvwprintw(win, 3, 2, "[Click here to Retry]");
-    mvwprintw(win, 4, 2, "[Click here to Exit]");
+    mvwprintw(win, 5, 2, "[Click here to Exit]");
     wrefresh(win);
 
     MEVENT event;

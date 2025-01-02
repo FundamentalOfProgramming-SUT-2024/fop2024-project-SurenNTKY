@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "game.h"
+#include "menu.h"
 
 void show_profile() {
     printw("Displaying user profile...\n");

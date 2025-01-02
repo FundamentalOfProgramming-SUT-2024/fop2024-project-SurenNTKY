@@ -1,5 +1,5 @@
 #include <ncurses.h>
-#include "game.h"
+#include "menu.h"
 
 void continue_game() {
     printw("Continuing the previous game...\n");

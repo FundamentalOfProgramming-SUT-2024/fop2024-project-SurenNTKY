@@ -3,21 +3,37 @@
 #include <ncurses.h>
 #include "user.h"
 
+
+#define USERNAME_MAX_LENGTH 30
+#define PASSWORD_MIN_LENGTH 7
+#define EMAIL_MAX_LENGTH 50
+
+
 void register_user() {
     char username[USERNAME_MAX_LENGTH];
     char password[PASSWORD_MIN_LENGTH * 2];
     char email[EMAIL_MAX_LENGTH];
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    int win_height = 20, win_width = 50;
+    int start_y = (max_y - win_height) / 2;
+    int start_x = (max_x - win_width) / 2;
 
-    WINDOW *win = newwin(12, 50, 1, 1);
+
+    WINDOW *win = newwin(win_height, win_width, start_y, start_x);
     box(win, 0, 0);
+    keypad(win, TRUE);
+
+
     mvwprintw(win, 1, 1, "Username: ");
     mvwprintw(win, 2, 1, "Password: ");
     mvwprintw(win, 3, 1, "Email: ");
-    mvwprintw(win, 8, 1, "Press ESC to quit.");
     wrefresh(win);
     echo();
     int field = 0;
-    int ch;
+    MEVENT event;
+    mousemask(ALL_MOUSE_EVENTS | REPORT_MOUSE_POSITION, NULL);
+
 
     while (1) {
         switch (field) {
@@ -30,7 +46,7 @@ void register_user() {
                     mvwprintw(win, 9, 1, "Username already exists or invalid.");
                 } else {
                     field++;
-                    mvwprintw(win, 9, 1, "                                 ");
+                    mvwprintw(win, 9, 1, "                                  ");
                 }
                 break;
             case 1:
@@ -42,7 +58,7 @@ void register_user() {
                     mvwprintw(win, 9, 1, "Password must be at least 7 chars, including one digit, one uppercase, and one lowercase.");
                 } else {
                     field++;
-                    mvwprintw(win, 9, 1, "                                 ");
+                    mvwprintw(win, 9, 1, "                                                                                          ");
                 }
                 break;
             case 2:
@@ -61,36 +77,51 @@ void register_user() {
                 break;
         }
 
+
         box(win, 0, 0);
         mvwprintw(win, 1, 1, "Username: ");
         mvwprintw(win, 2, 1, "Password: ");
         mvwprintw(win, 3, 1, "Email: ");
-        mvwprintw(win, 8, 1, "Press ESC to quit.");
         wrefresh(win);
 
-        ch = getch();
-        if (ch == 27) {
-            break;
-        } else if (ch == KEY_UP && field > 0) {
-            field--;
-        } else if (ch == KEY_DOWN && field < 2) {
-            field++;
-        }
 
-        if (field == 3) {
-            if (create_user(username, password, email)) {
-                mvwprintw(win, 5, 1, "User created successfully. Press ESC to quit.");
-            } else {
-                mvwprintw(win, 5, 1, "Failed to create user. Press ESC to quit.");
+        mvwprintw(win, 5, 1, "Confirm");
+        mvwprintw(win, 5, 15, "Exit");
+        wrefresh(win);
+
+
+        int ch = getch();
+        if (ch == KEY_MOUSE) {
+            if (getmouse(&event) == OK) {
+                if (event.bstate & BUTTON1_CLICKED) {
+                    if (event.y == start_y + 5 && event.x >= start_x + 1 && event.x <= start_x + 8) { // Confirm button
+                        if (field == 3) {
+                            if (create_user(username, password, email)) {
+                                mvwprintw(win, 6, 1, "User created successfully.");
+                            } else {
+                                mvwprintw(win, 6, 1, "Failed to create user.");
+                            }
+                            wrefresh(win);
+                            getch();
+                            break;
+                        }
+                    } else if (event.y == start_y + 5 && event.x >= start_x + 15 && event.x <= start_x + 21) { // Exit button
+                        endwin();
+                        printf("Exiting the game...\n");
+                        exit(0);
+                    }
+                }
             }
-            wrefresh(win);
-            getch();
-            break;
         }
     }
 
+
     delwin(win);
 }
+
+
+
+
 
 
 

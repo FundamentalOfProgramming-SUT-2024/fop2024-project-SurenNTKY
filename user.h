@@ -15,6 +15,4 @@ int check_email(const char *email);
 int create_user(const char *username, const char *password, const char *email);
 void generate_random_password(char *password);
 
-#endif 
-
-
+#endif

@@ -59,6 +59,7 @@
   "files.associations": {
     "string.h": "c",
     "stdio.h": "c",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "ncurses.h": "c"
   }
 }

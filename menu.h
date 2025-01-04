@@ -9,5 +9,3 @@ void show_settings();
 void show_profile();
 
 #endif
-
-

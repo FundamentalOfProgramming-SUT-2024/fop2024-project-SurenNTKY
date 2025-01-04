@@ -1,11 +1,9 @@
 #include <ncurses.h>
 #include "menu.h"
 
-void continue_game() {
-    printw("Continuing the previous game...\n");
+void continue_game()
+{
+    printw("Displaying the scoreboard...\n");
     refresh();
     getch();
 }
-
-
-

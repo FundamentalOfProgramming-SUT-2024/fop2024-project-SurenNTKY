@@ -2,7 +2,8 @@
 #include <ncurses.h>
 #include "user.h"
 
-void guest() {
+void guest()
+{
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
     int win_height = 12, win_width = 50;
@@ -13,9 +14,6 @@ void guest() {
     box(win, 0, 0);
     mvwprintw(win, 1, 1, "Welcome, Guest!");
     wrefresh(win);
-    
+
     delwin(win);
 }
-
-
-

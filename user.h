@@ -14,5 +14,6 @@ int check_password(const char *password);
 int check_email(const char *email);
 int create_user(const char *username, const char *password, const char *email);
 void generate_random_password(char *password);
+int check_password_login(const char *username, const char *password);
 
 #endif

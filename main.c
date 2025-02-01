@@ -1,14 +1,68 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
+#include <stdbool.h>
 #include "user.h"
 #include "menu.h"
 
+void draw_ascii_art();
+void draw_ascii_art1();
+
+void startBackgroundMusic(const char *filePath)
+{
+    if (SDL_Init(SDL_INIT_AUDIO) < 0)
+    {
+        printf("SDL_Init Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    if (Mix_Init(MIX_INIT_MP3) == 0)
+    {
+        printf("Mix_Init Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1)
+    {
+        printf("Mix_OpenAudio Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    Mix_Music *music = Mix_LoadMUS(filePath);
+    if (music == NULL)
+    {
+        printf("Mix_LoadMUS Error: %s\n", SDL_GetError());
+        return;
+    }
+
+    if (Mix_PlayMusic(music, -1) == -1)
+    {
+        printf("Mix_PlayMusic Error: %s\n", SDL_GetError());
+        return;
+    }
+}
+
+void stopBackgroundMusic()
+{
+    Mix_HaltMusic();
+    Mix_CloseAudio();
+    Mix_Quit();
+    SDL_Quit();
+}
+
 void show_menu()
 {
+
     start_color();
     init_pair(1, COLOR_BLACK, COLOR_RED);
     init_pair(2, COLOR_BLACK, COLOR_BLUE);
+    init_pair(3, COLOR_BLACK, COLOR_GREEN);
+    init_pair(4, COLOR_BLACK, COLOR_CYAN);
+    init_pair(5, COLOR_BLACK, COLOR_YELLOW);
+    init_pair(6, COLOR_BLACK, COLOR_WHITE);
 
     int highlight = 1, choice = 0, c;
     char *choices[] = {"New Game", "Continue Game", "Scoreboard", "Settings", "Profile", "Exit"};
@@ -16,6 +70,8 @@ void show_menu()
 
     clear();
     refresh();
+
+    draw_ascii_art1();
 
     int max_y, max_x;
     getmaxyx(stdscr, max_y, max_x);
@@ -43,6 +99,7 @@ void show_menu()
 
     while (1)
     {
+        wbkgd(menu_win, COLOR_PAIR(1));
 
         if (highlight == 1)
         {
@@ -129,15 +186,23 @@ void show_menu()
     switch (choice)
     {
     case 1:
+        clear();
+        refresh();
+        stopBackgroundMusic();
+        startBackgroundMusic("sound/background.mp3");
         new_game();
         break;
     case 2:
         continue_game();
         break;
     case 3:
+        clear();
+        refresh();
         show_scoreboard();
         break;
     case 4:
+        clear();
+        refresh();
         show_settings();
         break;
     case 5:
@@ -176,6 +241,51 @@ int main()
     clear();
     refresh();
 
+    init_pair(1, COLOR_BLACK, COLOR_BLUE);
+    init_pair(2, COLOR_BLACK, COLOR_CYAN);
+    init_pair(3, COLOR_BLACK, COLOR_RED);
+    init_pair(4, COLOR_BLACK, COLOR_YELLOW);
+
+    draw_ascii_art();
+
+    startBackgroundMusic("sound/start.mp3");
+
+    int max_yw, max_xw;
+    getmaxyx(stdscr, max_yw, max_xw);
+
+    int win_heightw = 11, win_widthw = 92;
+    int start_yw = (max_yw - win_heightw) / 2;
+    int start_xw = (max_xw - win_widthw) / 2;
+
+    curs_set(0);
+
+    WINDOW *winw = newwin(win_heightw, win_widthw, start_yw, start_xw);
+    box(winw, 0, 0);
+    wrefresh(winw);
+    for (int i = 0; i < 40; i++)
+    {
+        wbkgd(winw, COLOR_PAIR(i % 4 + 1));
+        int max_yw1, max_xw1;
+        getmaxyx(stdscr, max_yw1, max_xw1);
+
+        int win_heightw1 = 9, win_widthw1 = 90;
+        int start_yw1 = (max_yw1 - win_heightw1) / 2;
+        int start_xw1 = (max_xw1 - win_widthw1) / 2;
+
+        WINDOW *winw1 = newwin(win_heightw1, win_widthw1, start_yw1, start_xw1);
+        box(winw1, 0, 0);
+        attron(A_BOLD);
+        mvwprintw(winw1, 4, 19, "W E L C O M E   T O   T H E   S C A R Y   W O R L D!");
+        wrefresh(winw);
+        wrefresh(winw1);
+        napms(100);
+    }
+
+    clear();
+    refresh();
+
+    curs_set(1);
+
     int max_y1, max_x1;
     getmaxyx(stdscr, max_y1, max_x1);
 
@@ -196,9 +306,6 @@ int main()
     WINDOW *win = newwin(win_height, win_width, start_y, start_x);
     box(win, 0, 0);
 
-    init_pair(1, COLOR_BLACK, COLOR_BLUE);
-    init_pair(2, COLOR_BLACK, COLOR_CYAN);
-
     keypad(win, TRUE);
     keypad(win1, TRUE);
 
@@ -215,6 +322,9 @@ int main()
         {
             wattron(win, A_REVERSE);
             mvwprintw(win, 6, 27, "Login");
+            // printw("%d %d", max_y, max_x);
+            refresh();
+
             wattroff(win, A_REVERSE);
         }
         else
@@ -281,6 +391,8 @@ int main()
                 login();
                 clear();
                 refresh();
+                stopBackgroundMusic();
+                startBackgroundMusic("sound/menu.mp3");
                 show_menu();
                 break;
             case 2:
@@ -288,12 +400,16 @@ int main()
                 register_user();
                 clear();
                 refresh();
+                stopBackgroundMusic();
+                startBackgroundMusic("sound/menu.mp3");
                 show_menu();
                 break;
             case 3:
                 guest();
                 clear();
                 refresh();
+                stopBackgroundMusic();
+                startBackgroundMusic("sound/menu.mp3");
                 show_menu();
                 break;
             case 4:
@@ -307,4 +423,115 @@ int main()
 
     endwin();
     return 0;
+}
+
+void draw_ascii_art()
+{
+    curs_set(0);
+    const char *art[] = {
+        "                                        ,   ,                                ",
+        "                                        $,  $,     ,                         ",
+        "                                        \"ss.$ss. .s'                         ",
+        "                                ,     .ss$$$$$$$$$$s,                        ",
+        "                                $. s$$$$$$$$$$$$$$`$$Ss                      ",
+        "                                \"$$$$$$$$$$$$$$$$$o$$$       ,              ",
+        "                               s$$$$$$$$$$$$$$$$$$$$$$$$s,  ,s               ",
+        "                              s$$$$$$$$$\"$$$$$$\"\"$$$$$$\"$$$$$,             ",
+        "                              s$$$$$$$$$$s\"\"$$$$ssssss\"$$$$$$$$\"             ",
+        "                             s$$$$$$$$$$'         `\"\"\"ss\"$\"$s\"\"              ",
+        "                             s$$$$$$$$$$,              `\"\"\"\"$  .s$$s        ",
+        "                             s$$$$$$$$$$$$s,...               `s$$'  `       ",
+        "                         `ssss$$$$$$$$$$$$$$$$$$$$####s.     .$$\"$.   , s-   ",
+        "                           `\"\"\"\"$$$$$$$$$$$$$$$$$$$$#####$$$$$$\"     $.$'    ",
+        "                                  \"$$$$$$$$$$$$$$$$$$$$$####s\"\"     .$$$|     ",
+        "                                   \"$$$$$$$$$$$$$$$$$$$$$$$$##s    .$$\" $    ",
+        "                                   $$\"\"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$\"   `    ",
+        "                                  $$\"  \"$\"$$$$$$$$$$$$$$$$$$$$S\"\"\"'         ",
+        "                             ,   ,\"     '  $$$$$$$$$$$$$$$$####s             ",
+        "                             $.          .s$$$$$$$$$$$$$$$$$####\"            ",
+        "                 ,           \"$s.   ..ssS$$$$$$$$$$$$$$$$$$$####\"            ",
+        "                 $           .$$$S$$$$$$$$$$$$$$$$$$$$$$$$####\"              ",
+        "                 Ss     ..sS$$$$$$$$$$$$$$$$$$$$$$$$$$$######\"\"              ",
+        "                  \"$sS$$$$$$$$$$$$$$$$$$$$$$$$$$$########\"                  ",
+        "           ,      s$$$$$$$$$$$$$$$$$$$$$$$$#########\"\"'                      ",
+        "           $    s$$$$$$$$$$$$$$$$$$$$$#######\"'      s'         ,           ",
+        "           $$..$$$$$$$$$$$$$$$$$$######\"'       ....,$$....    ,$            ",
+        "            \"$$$$$$$$$$$$$$$######\"' ,     .sS$$$$$$$$$$$$$$$$s$$            ",
+        "              $$$$$$$$$$$$####\"     $, .s$$$$$$$$$$$$$$$$$$$$$$$$s.         ",
+        "   )          $$$$$$$$$$$#####'      `$$$$$$$$$###########$$$$$$$$$$$.       ",
+        "  ((          $$$$$$$$$$$#####       $$$$$$$$###\"       \"####$$$$$$$$$$      ",
+        "  ) \\         $$$$$$$$$$$$####.     $$$$$$###\"             \"###$$$$$$$$$   s'",
+        " (   )        $$$$$$$$$$$$$####.   $$$$$###\"                ####$$$$$$$$s$$' ",
+        " )  ( (       $$\"$$$$$$$$$$$#####.$$$$$###'                .###$$$$$$$$$$\"   ",
+        " (  )  )   _,$\"   $$$$$$$$$$$$######.$$##'                .###$$$$$$$$$$     ",
+        " ) (  ( \\.         \"$$$$$$$$$$$$$#######,,,.          ..####$$$$$$$$$$$\"     ",
+        "(   )$ )  )        ,$$$$$$$$$$$$$$$$$$####################$$$$$$$$$$$\"       ",
+        "(   ($$  ( \\     _sS\"  `\"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$S$$,       ",
+        " )  )$$$s ) )  .      .   `$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'\"  `$$      ",
+        "  (   $$$Ss/  .$,    .$,,s$$$$$$##S$$$$$$$$$$$$$$$$$$$$$$$$S\"\"        '      ",
+        "    \\)_$$$$$$$$$$$$$$$$$$$$$$$##\"  $$        `$$.        `$$.                ",
+        "        `\"S$$$$$$$$$$$$$$$$$#\"      $          `$          `$                ",
+        "            `\"\"\"\"\"\"\"\"\"\"\"\"\"\"'         '           '           '              "};
+
+    for (size_t i = 0; i < sizeof(art) / sizeof(art[0]); i++)
+    {
+        mvprintw(i, 1, "%s", art[i]);
+        refresh();
+        napms(50);
+    }
+
+    refresh();
+}
+
+void draw_ascii_art1()
+{
+    curs_set(0);
+    const char *art[] = {
+        "                              _.--\"\"-._",
+        "  .                         .\"         \".",
+        " / \\    ,^.         /(     Y             |      )\\",
+        "/   `---. |--'\\    (  \\__..'--   -   -- -'\"\"-.-'  )",
+        "|        :|    `>   '.     l_..-------.._l      .'",
+        "|      __l;__ .'      \"-.__.||_.-'v'-._||`\"----\"",
+        " \\  .-' | |  `              l._       _.''",
+        "  \\/    | |                   l`^^'^^'j",
+        "        | |                _   \\_____/     _",
+        "        j |               l `--__)-'(__.--' |",
+        "        | |               | /`---``-----'\"1 |  ,-----.",
+        "        | |               )/  `--' '---'   \\'-'  ___  `-.",
+        "        | |              //  `-'  '`----'  /  ,-'   I`.  \\",
+        "      _ L |_            //  `-.-.'`-----' /  /  |   |  `. \\",
+        "     '._' / \\         _/(   `/   )- ---' ;  /__.J   L.__.\\ :",
+        "      `._;/7(-.......'  /        ) (     |  |            | |",
+        "      `._;l _'--------_/        )-'/     :  |___.    _._./ ;",
+        "        | |                 .__ )-\\  __  \\  \\  I   1   / /",
+        "        `-'                /   `-\\-(-'   \\ \\  `.|   | ,' /",
+        "                           \\__  `-'    __/  `-. `---'',-'",
+        "                              )-._.-- (        `-----'",
+        "                             )(  l\\ o ('..-.",
+        "                       _..--' _'-' '--'.-. |",
+        "                __,,-'' _,,-''            \\ \\",
+        "               f'. _,,-'                   \\ \\",
+        "              ()--  |                       \\ \\",
+        "                \\.  |                       /  \\",
+        "                  \\ \\                      |._  |",
+        "                   \\ \\                     |  ()|",
+        "                    \\ \\                     \\  /",
+        "                     ) `-.                   | |",
+        "                    // .__)                  | |",
+        "                 _.//7'                      | |",
+        "               '---'                         j_| `",
+        "                                            (| |",
+        "                                             |  \\",
+        "                                             |lllj",
+        "                                             |||||  "};
+
+    for (size_t i = 0; i < sizeof(art) / sizeof(art[0]); i++)
+    {
+        mvprintw(i, 1, "%s", art[i]);
+        refresh();
+        napms(50);
+    }
+
+    refresh();
 }

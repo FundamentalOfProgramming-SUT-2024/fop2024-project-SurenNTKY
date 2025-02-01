@@ -137,7 +137,7 @@ void show_error_register2()
 
     WINDOW *win = newwin(win_height, win_width, start_y, start_x);
     box(win, 0, 0);
-    mvwprintw(win, 2, 33.5, "Username already exists");
+    mvwprintw(win, 2, 20.5, "Invalid Email format and Invalid Password format");
     wrefresh(win);
 
     WINDOW *win1 = newwin(3, 10, start_y + 5, start_x + 30);
@@ -196,7 +196,184 @@ void show_error_register3()
 
     WINDOW *win = newwin(win_height, win_width, start_y, start_x);
     box(win, 0, 0);
+    mvwprintw(win, 2, 19.5, "Username already exists and Invalid Password format");
+    wrefresh(win);
+
+    WINDOW *win1 = newwin(3, 10, start_y + 5, start_x + 30);
+    box(win1, 0, 0);
+    mvwprintw(win1, 1, 3, "EXIT");
+    wrefresh(win1);
+
+    WINDOW *win2 = newwin(3, 10, start_y + 5, start_x + 50);
+    box(win2, 0, 0);
+    mvwprintw(win2, 1, 2.5, "RETRY");
+    wrefresh(win2);
+
+    MEVENT event;
+    mousemask(ALL_MOUSE_EVENTS, NULL);
+
+    int ch;
+    while ((ch = getch()) != 27)
+    {
+        if (ch == KEY_MOUSE)
+        {
+            if (getmouse(&event) == OK)
+            {
+                if (event.bstate & BUTTON1_CLICKED)
+                {
+                    if (event.y == start_y + 6 && event.x >= start_x + 52.5 && event.x <= start_x + 57.5)
+                    {
+                        delwin(win);
+                        clear();
+                        refresh();
+                        curs_set(1);
+                        register_user();
+                        return;
+                    }
+                    else if (event.y == start_y + 6 && event.x >= start_x + 33 && event.x <= start_x + 37)
+                    {
+                        delwin(win);
+                        endwin();
+                        printf("Exiting the game...\n");
+                        exit(0);
+                    }
+                }
+            }
+        }
+    }
+    delwin(win);
+}
+void show_error_register4()
+{
+
+    curs_set(0);
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    int win_height = 10, win_width = 90;
+    int start_y = (max_y - win_height) / 2;
+    int start_x = (max_x - win_width) / 2;
+
+    WINDOW *win = newwin(win_height, win_width, start_y, start_x);
+    box(win, 0, 0);
+    mvwprintw(win, 2, 28.5, "Username already exists or invalid");
+    wrefresh(win);
+
+    WINDOW *win1 = newwin(3, 10, start_y + 5, start_x + 30);
+    box(win1, 0, 0);
+    mvwprintw(win1, 1, 3, "EXIT");
+    wrefresh(win1);
+
+    WINDOW *win2 = newwin(3, 10, start_y + 5, start_x + 50);
+    box(win2, 0, 0);
+    mvwprintw(win2, 1, 2.5, "RETRY");
+    wrefresh(win2);
+
+    MEVENT event;
+    mousemask(ALL_MOUSE_EVENTS, NULL);
+
+    int ch;
+    while ((ch = getch()) != 27)
+    {
+        if (ch == KEY_MOUSE)
+        {
+            if (getmouse(&event) == OK)
+            {
+                if (event.bstate & BUTTON1_CLICKED)
+                {
+                    if (event.y == start_y + 6 && event.x >= start_x + 52.5 && event.x <= start_x + 57.5)
+                    {
+                        delwin(win);
+                        clear();
+                        refresh();
+                        curs_set(1);
+                        register_user();
+                        return;
+                    }
+                    else if (event.y == start_y + 6 && event.x >= start_x + 33 && event.x <= start_x + 37)
+                    {
+                        delwin(win);
+                        endwin();
+                        printf("Exiting the game...\n");
+                        exit(0);
+                    }
+                }
+            }
+        }
+    }
+    delwin(win);
+}
+void show_error_register5()
+{
+
+    curs_set(0);
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    int win_height = 10, win_width = 90;
+    int start_y = (max_y - win_height) / 2;
+    int start_x = (max_x - win_width) / 2;
+
+    WINDOW *win = newwin(win_height, win_width, start_y, start_x);
+    box(win, 0, 0);
     mvwprintw(win, 2, 35, "Invalid email format");
+    wrefresh(win);
+
+    WINDOW *win1 = newwin(3, 10, start_y + 5, start_x + 30);
+    box(win1, 0, 0);
+    mvwprintw(win1, 1, 3, "EXIT");
+    wrefresh(win1);
+
+    WINDOW *win2 = newwin(3, 10, start_y + 5, start_x + 50);
+    box(win2, 0, 0);
+    mvwprintw(win2, 1, 2.5, "RETRY");
+    wrefresh(win2);
+
+    MEVENT event;
+    mousemask(ALL_MOUSE_EVENTS, NULL);
+
+    int ch;
+    while ((ch = getch()) != 27)
+    {
+        if (ch == KEY_MOUSE)
+        {
+            if (getmouse(&event) == OK)
+            {
+                if (event.bstate & BUTTON1_CLICKED)
+                {
+                    if (event.y == start_y + 6 && event.x >= start_x + 52.5 && event.x <= start_x + 57.5)
+                    {
+                        delwin(win);
+                        clear();
+                        refresh();
+                        curs_set(1);
+                        register_user();
+                        return;
+                    }
+                    else if (event.y == start_y + 6 && event.x >= start_x + 33 && event.x <= start_x + 37)
+                    {
+                        delwin(win);
+                        endwin();
+                        printf("Exiting the game...\n");
+                        exit(0);
+                    }
+                }
+            }
+        }
+    }
+    delwin(win);
+}
+void show_error_register6()
+{
+
+    curs_set(0);
+    int max_y, max_x;
+    getmaxyx(stdscr, max_y, max_x);
+    int win_height = 10, win_width = 90;
+    int start_y = (max_y - win_height) / 2;
+    int start_x = (max_x - win_width) / 2;
+
+    WINDOW *win = newwin(win_height, win_width, start_y, start_x);
+    box(win, 0, 0);
+    mvwprintw(win, 2, 33.5, "Invalid Password format");
     wrefresh(win);
 
     WINDOW *win1 = newwin(3, 10, start_y + 5, start_x + 30);
@@ -315,8 +492,10 @@ void register_user()
                 {
                     if (event.y == start_y + 31 && event.x >= start_x + 36.5 && event.x <= start_x + 43.5)
                     {
-                        if (check_username(username) && check_password(password) && check_email(email))
+                        if (!check_username(username) && check_password(password) && check_email(email))
                         {
+                            create_user(username, password, email);
+
                             int max_y2, max_x2;
                             getmaxyx(stdscr, max_y2, max_x2);
                             int menu_height2 = 5;
@@ -339,7 +518,15 @@ void register_user()
                             login();
                             return;
                         }
-                        else if (!check_username(username) || check_email(email))
+                        else if (check_username(username) && !check_email(email) && !check_password(password))
+                        {
+                            delwin(user_box);
+                            delwin(pass_box);
+                            delwin(win);
+                            show_error_register();
+                            return;
+                        }
+                        else if (check_username(username) && !check_email(email))
                         {
                             delwin(user_box);
                             delwin(pass_box);
@@ -347,7 +534,7 @@ void register_user()
                             show_error_register1();
                             return;
                         }
-                        else if (!check_username(username))
+                        else if (!check_email(email) && !check_password(password))
                         {
                             delwin(user_box);
                             delwin(pass_box);
@@ -355,7 +542,7 @@ void register_user()
                             show_error_register2();
                             return;
                         }
-                        else if (check_email(email))
+                        else if (!check_password(email) && check_username(username))
                         {
                             delwin(user_box);
                             delwin(pass_box);
@@ -363,12 +550,28 @@ void register_user()
                             show_error_register3();
                             return;
                         }
-                        else
+                        else if (check_username(username))
                         {
                             delwin(user_box);
                             delwin(pass_box);
                             delwin(win);
-                            show_error_register();
+                            show_error_register4();
+                            return;
+                        }
+                        else if (!check_email(email))
+                        {
+                            delwin(user_box);
+                            delwin(pass_box);
+                            delwin(win);
+                            show_error_register5();
+                            return;
+                        }
+                        else if (!check_password(email))
+                        {
+                            delwin(user_box);
+                            delwin(pass_box);
+                            delwin(win);
+                            show_error_register6();
                             return;
                         }
                     }

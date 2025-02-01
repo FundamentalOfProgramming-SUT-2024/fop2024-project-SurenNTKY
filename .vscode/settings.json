@@ -60,6 +60,9 @@
     "string.h": "c",
     "stdio.h": "c",
     "stdlib.h": "c",
-    "ncurses.h": "c"
+    "ncurses.h": "c",
+    "stdbool.h": "c",
+    "unistd.h": "c",
+    "sdl_mixer.h": "c"
   }
 }

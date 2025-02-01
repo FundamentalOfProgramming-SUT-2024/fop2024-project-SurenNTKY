@@ -124,6 +124,7 @@ void login()
     echo();
     mvwgetnstr(user_box, 1, 1, username, USERNAME_MAX_LENGTH);
     mvwgetnstr(pass_box, 1, 1, password, PASSWORD_MIN_LENGTH * 2);
+    // printw("%s", username);
     noecho();
 
     mousemask(ALL_MOUSE_EVENTS, NULL);
@@ -139,9 +140,9 @@ void login()
             {
                 if (event.bstate & BUTTON1_CLICKED)
                 {
-                    if (event.y == start_y + 20 && event.x >= start_x + 26.5 && event.x <= start_x + 33.5)
+                    if (event.y >= start_y + 19 && event.y <= start_y + 22 && event.x >= start_x + 26.5 && event.x <= start_x + 33.5)
                     {
-                        if (check_username(username) && check_password(password))
+                        if (check_username(username) && check_password_login(username, password))
                         {
                             int max_y2, max_x2;
                             getmaxyx(stdscr, max_y2, max_x2);
